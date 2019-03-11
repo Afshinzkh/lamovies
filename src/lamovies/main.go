@@ -42,12 +42,14 @@ func addMovie(w http.ResponseWriter, r *http.Request) {
 		output.Error(w, http.StatusBadRequest, err.Error())
 	}
 
+	movies = append(movies, movie)
+
 	output.JSON(w, http.StatusOK, movie)
 
 }
 
 func getAllMovies(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Getting all movies\n")
+	output.JSON(w, http.StatusOK, movies)
 
 }
 
