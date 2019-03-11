@@ -54,5 +54,14 @@ func getAllMovies(w http.ResponseWriter, r *http.Request) {
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	for _, movie := range movies {
+		if movie.ID == params["id"] {
+			output.JSON(w, http.StatusOK, movie)
+			return
+		}
+	}
+	output.Error(w, http.StatusNotFound, "movie with this ID is not found")
 
 }
