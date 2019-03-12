@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"lamovies/output"
@@ -9,13 +10,39 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
 
 // a sample struct for noDatabase scenario
 var movies []types.Movie
 
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "asdfghjk"
+	dbname   = "movies_db"
+)
+
 func init() {
-	// here I should define the database
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Successfully connected!")
+
 }
 
 func routers() *mux.Router {
