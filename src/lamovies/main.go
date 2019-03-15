@@ -47,26 +47,33 @@ func addMovie(w http.ResponseWriter, r *http.Request) {
 		output.Error(w, http.StatusBadRequest, err.Error())
 	}
 
-	movies = append(movies, movie)
+	movie, err := store.Add(movie)
+	if err != nil {
+		output.Error(w, http.StatusInternalServerError, err.Error())
+	}
 
 	output.JSON(w, http.StatusOK, movie)
 
 }
 
 func getAllMovies(w http.ResponseWriter, r *http.Request) {
-	output.JSON(w, http.StatusOK, movies)
+	dmovies, err := store.GetAll()
+	if err != nil {
+		output.Error(w, http.StatusInternalServerError, err.Error())
+	}
+	output.JSON(w, http.StatusOK, dmovies)
 
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+	// params := mux.Vars(r)
 
-	for _, movie := range movies {
-		if movie.ID == params["id"] {
-			output.JSON(w, http.StatusOK, movie)
-			return
-		}
-	}
+	// for _, movie := range movies {
+	// 	if movie.ID ==  params["id"] {
+	// 		output.JSON(w, http.StatusOK, movie)
+	// 		return
+	// 	}
+	// }
 	output.Error(w, http.StatusNotFound, "movie with this ID is not found")
 
 }
