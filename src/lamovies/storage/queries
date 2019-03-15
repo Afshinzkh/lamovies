@@ -1,0 +1,13 @@
+CREATE DATABASE movies_db
+
+CREATE TABLE "movies" (
+mid BIGSREAL PRIMARY KEY NOT NULL,
+name TEXT NOT NULL,
+status VARCHAR(20) NOT NULL,
+date_added TIMESTAMP);
+
+INSERT INTO "movies" (name, status, date_added) VALUES (´pulp fiction´, ´available´, CURRENT_TIMES
+TAMP);
+
+UPDATE movies SET name = 'Pulp Fiction' WHERE mid = 1;
+

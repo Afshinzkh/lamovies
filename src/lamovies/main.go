@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"lamovies/output"
+	"lamovies/storage"
 	"lamovies/types"
 	"log"
 	"net/http"
@@ -14,35 +14,13 @@ import (
 )
 
 // a sample struct for noDatabase scenario
-var movies []types.Movie
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "asdfghjk"
-	dbname   = "movies_db"
+var (
+	movies []types.Movie
+	store  storage.MoviesStorage
 )
 
 func init() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
-
+	store.Connect()
 }
 
 func routers() *mux.Router {
