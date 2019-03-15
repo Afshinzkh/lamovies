@@ -58,7 +58,16 @@ func (m *MoviesStorage) GetAll() (movies []types.Movie, err error) {
 	return movies, nil
 }
 
-func (m *MoviesStorage) GetByID() {}
+func (m *MoviesStorage) GetByID(id int) (types.Movie, error) {
+	statement := `SELECT * FROM movies WHERE mid=$1`
+
+	var movie types.Movie
+	if err := m.db.QueryRow(statement, id).Scan(&movie.ID, &movie.Name, &movie.Status, &movie.DateAdded); err != nil {
+		return types.Movie{}, err
+	}
+
+	return movie, nil
+}
 
 func (m *MoviesStorage) Add(movie types.Movie) (types.Movie, error) {
 	now := time.Now()
@@ -83,5 +92,4 @@ func createTable() {
 		date_added TIMESTAMP)`
 
 	fmt.Println(statement)
-
 }

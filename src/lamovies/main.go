@@ -8,6 +8,7 @@ import (
 	"lamovies/types"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -45,11 +46,13 @@ func addMovie(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&movie); err != nil {
 		output.Error(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	movie, err := store.Add(movie)
 	if err != nil {
 		output.Error(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	output.JSON(w, http.StatusOK, movie)
@@ -60,20 +63,26 @@ func getAllMovies(w http.ResponseWriter, r *http.Request) {
 	dmovies, err := store.GetAll()
 	if err != nil {
 		output.Error(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 	output.JSON(w, http.StatusOK, dmovies)
 
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
-	// params := mux.Vars(r)
+	params := mux.Vars(r)
 
-	// for _, movie := range movies {
-	// 	if movie.ID ==  params["id"] {
-	// 		output.JSON(w, http.StatusOK, movie)
-	// 		return
-	// 	}
-	// }
-	output.Error(w, http.StatusNotFound, "movie with this ID is not found")
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		output.Error(w, http.StatusPreconditionFailed, err.Error())
+		return
+	}
+	movie, err := store.GetByID(id)
+	if err != nil {
+		output.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	output.JSON(w, http.StatusOK, movie)
 
 }
