@@ -35,7 +35,7 @@ func (m *MoviesStorage) Connect() {
 	if err != nil {
 		panic(err)
 	}
-	m.db = db
+	m.db = createTable(db)
 	fmt.Println("Successfully connected!")
 }
 
@@ -84,12 +84,17 @@ func (m *MoviesStorage) Add(movie types.Movie) (types.Movie, error) {
 	return movie, nil
 }
 
-func createTable() {
+func createTable(db *sql.DB) *sql.DB {
 	statement := ` CREATE TABLE IF NOT EXISTS "movies" (
 		mid BIGSERIAL PRIMARY KEY NOT NULL,
 		name TEXT NOT NULL,
 		status VARCHAR(20) NOT NULL,
 		date_added TIMESTAMP)`
 
-	fmt.Println(statement)
+	_, err := db.Exec(statement)
+	if err != nil {
+		panic(err)
+	}
+
+	return db
 }
